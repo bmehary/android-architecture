@@ -89,27 +89,29 @@ class TasksFragment : Fragment() {
     }
 
     private fun showFilteringPopUpMenu() {
-        PopupMenu(context, activity.findViewById<View>(R.id.menu_filter)).run {
-            menuInflater.inflate(R.menu.filter_tasks, menu)
+        if (context != null && activity != null) {
+            PopupMenu(context!!, activity!!.findViewById<View>(R.id.menu_filter)).run {
+                menuInflater.inflate(R.menu.filter_tasks, menu)
 
-            setOnMenuItemClickListener {
-                viewDataBinding.viewmodel?.run {
-                    currentFiltering =
-                            when (it.itemId) {
-                                R.id.active -> TasksFilterType.ACTIVE_TASKS
-                                R.id.completed -> TasksFilterType.COMPLETED_TASKS
-                                else -> TasksFilterType.ALL_TASKS
-                            }
-                    loadTasks(false)
+                setOnMenuItemClickListener {
+                    viewDataBinding.viewmodel?.run {
+                        currentFiltering =
+                                when (it.itemId) {
+                                    R.id.active -> TasksFilterType.ACTIVE_TASKS
+                                    R.id.completed -> TasksFilterType.COMPLETED_TASKS
+                                    else -> TasksFilterType.ALL_TASKS
+                                }
+                        loadTasks(false)
+                    }
+                    true
                 }
-                true
+                show()
             }
-            show()
         }
     }
 
     private fun setupFab() {
-        activity.findViewById<FloatingActionButton>(R.id.fab_add_task).run {
+        activity?.findViewById<FloatingActionButton>(R.id.fab_add_task)?.run {
             setImageResource(R.drawable.ic_add)
             setOnClickListener {
                 viewDataBinding.viewmodel?.addNewTask()
@@ -129,11 +131,15 @@ class TasksFragment : Fragment() {
 
     private fun setupRefreshLayout() {
         viewDataBinding.refreshLayout.run {
-            setColorSchemeColors(
-                    ContextCompat.getColor(activity, R.color.colorPrimary),
-                    ContextCompat.getColor(activity, R.color.colorAccent),
-                    ContextCompat.getColor(activity, R.color.colorPrimaryDark)
-            )
+
+            if (activity != null) {
+                setColorSchemeColors(
+                        ContextCompat.getColor(activity!!, R.color.colorPrimary),
+                        ContextCompat.getColor(activity!!, R.color.colorAccent),
+                        ContextCompat.getColor(activity!!, R.color.colorPrimaryDark)
+                )
+            }
+
             // Set the scrolling view in the custom SwipeRefreshLayout.
             scrollUpChild = viewDataBinding.tasksList
         }
